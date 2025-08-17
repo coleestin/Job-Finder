@@ -31,9 +31,6 @@ async def upload_resume(
 
     json_details = get_resume_details(text)
 
-
-
-
     return JSONResponse({
         "status": "success",
         "filename": filename,
