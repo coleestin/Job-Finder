@@ -203,3 +203,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Uploads folder (dont want resumes to be public info)
+*.pdf
