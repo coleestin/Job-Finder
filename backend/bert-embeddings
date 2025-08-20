@@ -1,0 +1,48 @@
+from sentence_transformers import SentenceTransformer
+
+
+#TODO: Run comparison of models
+# all-MiniLM-L6-v2
+# all-mpnet-base-v2
+# multi-qa-MiniLM-L6-cos-v1
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+
+
+def encode_resume_details(resume_json: dict):
+
+    embeddings = {}
+
+    if resume_json.get("summary"):
+        embeddings["summary"] = model.encode(resume_json["summary"])
+
+    if resume_json.get("skills"):
+        skills_text = ", ".join(resume_json["skills"])
+        embeddings["skills"] = model.encode(skills_text)
+
+    if resume_json.get("experience"):
+        exp_text = " ".join(
+            f"{e['role']} at {e['company']} ({e['years']}) {e['description']}"
+            for e in resume_json["experience"]
+        )
+        embeddings["experience"] = model.encode(exp_text)
+
+    if resume_json.get("education"):
+        edu_text = " ".join(
+            f"{e['degree']} at {e['institution']} ({e['years']})"
+            for e in resume_json["education"]
+        )
+        embeddings["education"] = model.encode(edu_text)
+
+    if resume_json.get("projects"):
+        proj_text = " ".join(
+            f"{p['name']}: {p['description']}" for p in resume_json["projects"]
+        )
+        embeddings["projects"] = model.encode(proj_text)
+
+    if resume_json.get("certifications"):
+        cert_text = ", ".join(resume_json["certifications"])
+        embeddings["certifications"] = model.encode(cert_text)
+
+    return embeddings
+

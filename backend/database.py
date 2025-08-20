@@ -27,7 +27,7 @@ def get_or_create_user(name: str, email: str) -> str | None:
         return response.data[0]["id"]
     return None
 
-
+#TODO: add more fields, we want to embed different details (summary, skills, experience, projects) individually
 def save_resume(user_id: str, raw_text: str, structured_data: dict, embedding: list[float]):
     response = (
         supabase.table("resumes")

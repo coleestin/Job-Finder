@@ -5,6 +5,7 @@ import shutil
 from uuid import uuid4
 import pymupdf
 from llm import get_resume_details
+from database import get_or_create_user, save_resume
 
 app = FastAPI()
 
@@ -14,19 +15,21 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 @app.post("/upload-resume")
 async def upload_resume(
     file: UploadFile = File(...),
-    user_id: str = Form(...)
+    user_name: str = Form(...),
+    user_email: str = Form(...)
 ):
     # Generate unique filename
     filename = f"{uuid4()}_{file.filename}"
     file_path = os.path.join(UPLOAD_DIR, filename)
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    get_or_create_user(user_name,user_email)
 
-    doc = pymupdf.open(file_path)
+    file_bytes = file.read()
+
+    doc = pymupdf.open(stream=file_bytes, filetype="pdf")
     text = ""
     for page in doc:  
-        text += page.get_text("text")  # extract text page by page
+        text += page.get_text("text")
     doc.close()
 
     json_details = get_resume_details(text)
